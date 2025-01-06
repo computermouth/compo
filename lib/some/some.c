@@ -4,9 +4,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-Other * new_other(uint32_t u32, Junk j);
-void inc_other_b(Other * o);
-
 Junk new_junk(int32_t value) {
 	return (Junk){.value = value};
 }
