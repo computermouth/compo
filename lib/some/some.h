@@ -16,5 +16,6 @@ typedef struct Other {
 Junk new_junk(int32_t value);
 Other * new_other(uint32_t incrementer, Junk j);
 void inc_other_junk_value(Other * o);
+void free_other(Other * o);
 
 #endif
