@@ -23,7 +23,6 @@ impl bindings::RcmpWorldImports for MyState {
 // impl bindings::wasi::cli::environment::Host for MyState {}
 
 fn main() -> wasmtime::Result<()> {
-
     // Compile the `Component` that is being run for the application.
     let engine = Engine::default();
     let component = Component::from_file(&engine, "target/wasm32-wasip1/debug/rcmp.wasm")?;
@@ -50,10 +49,10 @@ fn main() -> wasmtime::Result<()> {
             name: "Ben".to_string(),
         },
     );
-    let bindings = bindings::RcmpWorld::instantiate(&mut store, &component, &linker)?;
+    let rcmp = bindings::RcmpWorld::instantiate(&mut store, &component, &linker)?;
 
     // Here our `greet` function doesn't take any parameters for the component,
     // but in the Wasmtime embedding API the first argument is always a `Store`.
-    bindings.call_greet(&mut store)?;
+    rcmp.call_greet(&mut store)?;
     Ok(())
 }

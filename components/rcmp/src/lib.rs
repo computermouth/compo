@@ -1,4 +1,3 @@
-
 mod bindings {
     wit_bindgen_rust_macro::generate!({
         path: "./wit",

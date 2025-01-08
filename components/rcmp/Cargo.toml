@@ -12,10 +12,10 @@ wit-bindgen-rust-macro = "0.34.0"
 crate-type = ["cdylib"]
 
 [package.metadata.component.target.dependencies]
-"wasi:filesystem" = {path = "wit/deps/filesystem"}
-"wasi:io" = {path = "wit/deps/io"}
-"wasi:random" = {path = "wit/deps/random"}
-"wasi:clocks" = {path = "wit/deps/clocks"}
-"wasi:sockets" = {path = "wit/deps/sockets"}
-"wasi:cli" = {path = "wit/deps/cli"}
-"wasi:http" = {path = "wit/deps/http"}
+# "wasi:filesystem" = {path = "wit/deps/filesystem"}
+# "wasi:io" = {path = "wit/deps/io"}
+# "wasi:random" = {path = "wit/deps/random"}
+# "wasi:clocks" = {path = "wit/deps/clocks"}
+# "wasi:sockets" = {path = "wit/deps/sockets"}
+# "wasi:cli" = {path = "wit/deps/cli"}
+# "wasi:http" = {path = "wit/deps/http"}
