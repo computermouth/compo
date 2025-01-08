@@ -5,7 +5,6 @@ edition = "2021"
 
 [dependencies]
 wit-bindgen = "0.34.0"
-wit-bindgen-rt = "0.34.0"
 wit-bindgen-rust-macro = "0.34.0"
 
 [lib]
