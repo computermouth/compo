@@ -8,15 +8,13 @@ mod bindings {
     });
 }
 
-struct MyState {
-    name: String,
-}
+struct MyState;
 
 // Imports into the world, like the `name` import for this world, are
 // satisfied through traits.
 impl bindings::RcmpWorldImports for MyState {
-    fn name(&mut self) -> String {
-        self.name.clone()
+    fn name(&mut self) -> u8 {
+        0
     }
 }
 
@@ -41,12 +39,7 @@ fn main() -> wasmtime::Result<()> {
     // takes the store, component, and linker. This returns the `bindings`
     // structure which is an instance of `HelloWorld` and supports typed access
     // to the exports of the component.
-    let mut store = Store::new(
-        &engine,
-        MyState {
-            name: "Ben".to_string(),
-        },
-    );
+    let mut store = Store::new(&engine, MyState {});
     let rcmp = bindings::RcmpWorld::instantiate(&mut store, &component, &linker)?;
 
     // Here our `greet` function doesn't take any parameters for the component,
