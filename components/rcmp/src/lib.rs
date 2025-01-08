@@ -2,8 +2,6 @@ mod bindings {
     wit_bindgen_rust_macro::generate!({
         path: "./wit",
         world: "rcmp-world",
-        std_feature,
-        generate_all,
     });
 }
 

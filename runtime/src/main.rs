@@ -20,8 +20,6 @@ impl bindings::RcmpWorldImports for MyState {
     }
 }
 
-// impl bindings::wasi::cli::environment::Host for MyState {}
-
 fn main() -> wasmtime::Result<()> {
     // Compile the `Component` that is being run for the application.
     let engine = Engine::default();
