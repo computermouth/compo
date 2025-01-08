@@ -1,0 +1,6 @@
+package component:rcmp;
+
+world rcmp-world {
+    import name: func() -> string;
+    export greet: func() -> string;
+}

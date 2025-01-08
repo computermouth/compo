@@ -1,0 +1,27 @@
+package host:lib;
+
+interface host {
+    record host-inner {
+        value: s32,
+    }
+
+    record host-outer {
+        incrementer: u32,
+        inner: host-inner,
+    }
+
+    /// analog for an outer pointer
+    resource outer-handle;
+
+    host-new-inner: func(value: s32) -> host-inner;
+    host-new-outer: func(incrementer: u32, inner: host-inner) -> outer-handle;
+    host-outer-inc-inner: func(outer: outer-handle);
+    host-outer-free: func(outer: outer-handle);
+}
+
+outer->incrementer = 2;
+
+
+world imports {
+    import host;
+}
