@@ -1,36 +1,41 @@
-#version 300 es
+#version 310 es
 
 precision highp float;
 
-// Vertex positions, normals and UV coords for the fragment shader
-out vec3 vp, vn;
-out vec2 vt;
-
 // Input vertex positions & normals and blend vertex positions & normals
-in vec3 p, n, p2, n2;
-
+layout(location = 0) in vec3 p;
+layout(location = 1) in vec3 n;
+layout(location = 2) in vec3 p2;
+layout(location = 3) in vec3 n2;
 // Input UV coords
-in vec2 t;
+layout(location = 4) in vec2 t;
 
-// Camera position (x, y, z) and aspect ratio (w)
-uniform vec4 camera_pos;
+layout(set = 0, binding = 0) uniform UBO {
+    // Camera position (x, y, z) and aspect ratio (w)
+    vec4 camera_pos;
 
-// Model scale, rotation, translation(pos) v4 -> matrix
-uniform vec4 model_mat_v1;
-uniform vec4 model_mat_v2;
-uniform vec4 model_mat_v3;
-uniform vec4 model_mat_v4;
+    // Model scale, rotation, translation(pos) v4 -> matrix
+    vec4 model_mat_v1;
+    vec4 model_mat_v2;
+    vec4 model_mat_v3;
+    vec4 model_mat_v4;
 
-// Mouse rotation yaw (x), pitch (y)
-uniform vec2 mouse;
+    // Mouse rotation yaw (x), pitch (y)
+    vec2 mouse;
 
-// Blend factor between the two vertex positions
-uniform float blend;
+    // Blend factor between the two vertex positions
+    float blend;
 
-// Use a static multiplier to light, instead
-// of dynamic lighting
-uniform vec3 glow;
-out vec3 out_glow;
+    // Use a static multiplier to light, instead
+    // of dynamic lighting
+    vec3 glow;
+};
+
+// Vertex positions, normals and UV coords for the fragment shader
+layout(location = 0) out vec3 vp;
+layout(location = 1) out vec3 vn;
+layout(location = 2) out vec2 vt;
+layout(location = 3) out vec3 out_glow;
 
 // Generate a rotation Matrix around the x,y,z axis;
 // Used for model rotation and camera yaw
@@ -111,6 +116,12 @@ vec3 clamp_v3_to_fixed_point(vec3 val) {
 
     return val;
 }
+
+// todo 
+// use
+// uint packHalf2x16(vec2 v); 
+// vec2 unpackHalf2x16(uint v);
+// to truncate floats instead of clamping??
 
 void main(void) {
     out_glow = glow;

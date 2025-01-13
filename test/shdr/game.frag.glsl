@@ -1,24 +1,23 @@
-#version 300 es
+#version 310 es
 
 precision highp float;
 
 // Vertex positions, normals and UV coords
-in vec3 vp, vn;
-in vec2 vt;
-
-uniform sampler2D s;
-
-// count of (the vectors) of lights (2* num_lights)
-uniform int light_count;
-
-// Lights [(x,y,z), [r,g,b], ...]
-uniform vec3 lights[64];
-
+layout(location = 0) in vec3 vp;
+layout(location = 1) in vec3 vn;
+layout(location = 2) in vec2 vt;
 // Use a static multiplier to light, instead
 // of dynamic lighting
-in vec3 out_glow;
+layout(location = 3) in vec3 out_glow;
+// uniform bool use_out_glow???
 
-out vec4 fragColor;
+layout(binding = 0) uniform sampler2D s;
+layout(set = 0, binding = 1) uniform UBO {
+    int light_count; // count of (the vectors) of lights (2* num_lights)
+    vec3 lights[64]; // Lights [(x,y,z), [r,g,b], ...]
+};
+
+layout(location = 0) out vec4 fragColor;
 
 void main(void) {
     fragColor = texture(s, vt);
@@ -55,3 +54,8 @@ void main(void) {
         * 16.0 + 0.5
     ) / 16.0; // Reduce final output color for some extra dirty looks
 }
+
+
+
+
+ORTHOPEDICS
