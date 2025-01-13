@@ -1,0 +1,49 @@
+#include <metal_stdlib>
+#include <simd/simd.h>
+
+using namespace metal;
+
+struct UBO
+{
+    int light_count;
+    float3 lights[64];
+};
+
+struct main0_out
+{
+    float4 fragColor [[color(0)]];
+};
+
+struct main0_in
+{
+    float3 vp [[user(locn0)]];
+    float3 vn [[user(locn1)]];
+    float2 vt [[user(locn2)]];
+    float3 out_glow [[user(locn3)]];
+};
+
+fragment main0_out main0(main0_in in [[stage_in]], constant UBO& _40 [[buffer(1)]], texture2d<float> s [[texture(0)]], sampler sSmplr [[sampler(0)]])
+{
+    main0_out out = {};
+    out.fragColor = s.sample(sSmplr, in.vt);
+    float3 vl = float3(0.0);
+    for (int i = 0; i < _40.light_count; i += 2)
+    {
+        vl += (_40.lights[i + 1] * (fast::max(dot(in.vn, fast::normalize(_40.lights[i] - in.vp)), 0.0) * (1.0 / powr(length(_40.lights[i] - in.vp), 2.0))));
+    }
+    float3 p = powr(vl, float3(0.75));
+    if (!isnan(in.out_glow.x))
+    {
+        out.fragColor.x = in.out_glow.x;
+        out.fragColor.y = in.out_glow.y;
+        out.fragColor.z = in.out_glow.z;
+        return out;
+    }
+    float4 _106 = out.fragColor;
+    float3 _117 = floor(((_106.xyz * p) * 16.0) + float3(0.5)) / float3(16.0);
+    out.fragColor.x = _117.x;
+    out.fragColor.y = _117.y;
+    out.fragColor.z = _117.z;
+    return out;
+}
+

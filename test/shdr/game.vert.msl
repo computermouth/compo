@@ -1,0 +1,112 @@
+#pragma clang diagnostic ignored "-Wmissing-prototypes"
+
+#include <metal_stdlib>
+#include <simd/simd.h>
+
+using namespace metal;
+
+struct mat_comp
+{
+    float3x3 rotation;
+    float3 translation;
+    float3 scale;
+};
+
+struct UBO
+{
+    float4 camera_pos;
+    float4 model_mat_v1;
+    float4 model_mat_v2;
+    float4 model_mat_v3;
+    float4 model_mat_v4;
+    float2 mouse;
+    float blend;
+    float3 glow;
+};
+
+struct main0_out
+{
+    float3 vp [[user(locn0)]];
+    float3 vn [[user(locn1)]];
+    float2 vt [[user(locn2)]];
+    float3 out_glow [[user(locn3)]];
+    float4 gl_Position [[position]];
+};
+
+struct main0_in
+{
+    float3 p [[attribute(0)]];
+    float3 n [[attribute(1)]];
+    float3 p2 [[attribute(2)]];
+    float3 n2 [[attribute(3)]];
+    float2 t [[attribute(4)]];
+};
+
+static inline __attribute__((always_inline))
+float4 clamp_to_fixed_point(thread float4& val)
+{
+    float _step = 0.03125;
+    val = round(val / float4(_step)) * float4(_step);
+    return val;
+}
+
+static inline __attribute__((always_inline))
+mat_comp decomp_mat(thread const float4x4& matrix)
+{
+    mat_comp components;
+    components.translation = matrix[3].xyz;
+    components.scale = float3(length(matrix[0].xyz), length(matrix[1].xyz), length(matrix[2].xyz));
+    components.rotation = float3x3(float3(matrix[0].xyz / float3(components.scale.x)), float3(matrix[1].xyz / float3(components.scale.y)), float3(matrix[2].xyz / float3(components.scale.z)));
+    return components;
+}
+
+static inline __attribute__((always_inline))
+float3 clamp_v3_to_fixed_point(thread float3& val)
+{
+    float _step = 0.03125;
+    val = round(val / float3(_step)) * float3(_step);
+    return val;
+}
+
+static inline __attribute__((always_inline))
+float4x4 rx(thread const float& r)
+{
+    return float4x4(float4(1.0, 0.0, 0.0, 0.0), float4(0.0, cos(r), sin(r), 0.0), float4(0.0, -sin(r), cos(r), 0.0), float4(0.0, 0.0, 0.0, 1.0));
+}
+
+static inline __attribute__((always_inline))
+float4x4 ry(thread const float& r)
+{
+    return float4x4(float4(cos(r), 0.0, -sin(r), 0.0), float4(0.0, 1.0, 0.0, 0.0), float4(sin(r), 0.0, cos(r), 0.0), float4(0.0, 0.0, 0.0, 1.0));
+}
+
+vertex main0_out main0(main0_in in [[stage_in]], constant UBO& _167 [[buffer(0)]])
+{
+    main0_out out = {};
+    out.out_glow = _167.glow;
+    float4 param = _167.model_mat_v1;
+    float4 _177 = clamp_to_fixed_point(param);
+    float4 param_1 = _167.model_mat_v2;
+    float4 _181 = clamp_to_fixed_point(param_1);
+    float4 param_2 = _167.model_mat_v3;
+    float4 _185 = clamp_to_fixed_point(param_2);
+    float4 param_3 = _167.model_mat_v4;
+    float4 _190 = clamp_to_fixed_point(param_3);
+    float4x4 model_mat = float4x4(float4(_177), float4(_181), float4(_185), float4(_190));
+    float4x4 param_4 = model_mat;
+    mat_comp model = decomp_mat(param_4);
+    float3 vp_in = (model.rotation * (model.scale * mix(in.p, in.p2, float3(_167.blend)))) + model.translation;
+    float3 param_5 = vp_in;
+    float3 _240 = clamp_v3_to_fixed_point(param_5);
+    out.vp = _240;
+    out.vn = model.rotation * mix(in.n, in.n2, float3(_167.blend));
+    out.vt = in.t;
+    float3 param_6 = _167.camera_pos.xyz;
+    float3 _263 = clamp_v3_to_fixed_point(param_6);
+    float3 camera_pos_xyz = _263;
+    float param_7 = -_167.mouse.y;
+    float param_8 = -_167.mouse.x;
+    out.gl_Position = ((float4x4(float4(1.0, 0.0, 0.0, 0.0), float4(0.0, _167.camera_pos.w, 0.0, 0.0), float4(0.0, 0.0, 1.0, 1.0), float4(0.0, 0.0, -2.0, 0.0)) * rx(param_7)) * ry(param_8)) * float4(out.vp - camera_pos_xyz, 1.0);
+    return out;
+}
+
