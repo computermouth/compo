@@ -54,8 +54,3 @@ void main(void) {
         * 16.0 + 0.5
     ) / 16.0; // Reduce final output color for some extra dirty looks
 }
-
-
-
-
-ORTHOPEDICS

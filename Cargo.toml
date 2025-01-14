@@ -2,3 +2,5 @@
 resolver = "2"
 
 members = [ "components/rcmp","runtime"]
+
+exclude = [ "nostd_comp" ]

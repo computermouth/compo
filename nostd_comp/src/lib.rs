@@ -7,6 +7,13 @@ use alloc::string::ToString;
 #[global_allocator]
 static A: dlmalloc::GlobalDlmalloc = dlmalloc::GlobalDlmalloc;
 
+use core::panic::PanicInfo;
+
+#[panic_handler]
+fn panic(_info: &PanicInfo) -> ! {
+    loop {}
+}
+
 mod bindings {
     wit_bindgen_rust_macro::generate!({
         path: "./wit",
