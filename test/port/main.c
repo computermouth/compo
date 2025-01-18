@@ -1,4 +1,7 @@
 // adapted from https://github.com/TheSpydog/SDL_gpu_examples
+#include <stdio.h>
+#include <stdlib.h>
+#include <math.h>
 
 #include <SDL3/SDL.h>
 
@@ -113,7 +116,7 @@ int main(){
 				.buffer_slot = 0,
 				.format = SDL_GPU_VERTEXELEMENTFORMAT_FLOAT3,
 				.location = 0,
-				.offset = 0 * sizeof(float) * 3
+				.offset = 0
 			},
 			// 	float n[3];
 			{
@@ -126,21 +129,21 @@ int main(){
 			{
 				.buffer_slot = 0,
 				.format = SDL_GPU_VERTEXELEMENTFORMAT_FLOAT3,
-				.location = 1,
+				.location = 2,
 				.offset = 2 * sizeof(float) * 3
 			},
 			// 	float n2[3];
 			{
 				.buffer_slot = 0,
 				.format = SDL_GPU_VERTEXELEMENTFORMAT_FLOAT3,
-				.location = 1,
+				.location = 3,
 				.offset = 3 * sizeof(float) * 3
 			},
 			// float t[2];
 			{
 				.buffer_slot = 0,
 				.format = SDL_GPU_VERTEXELEMENTFORMAT_FLOAT2,
-				.location = 1,
+				.location = 4,
 				.offset = 4 * sizeof(float) * 3
 			}}
 		},
@@ -148,6 +151,7 @@ int main(){
 		.vertex_shader = vert_shader,
 		.fragment_shader = frag_shader
 	};
+	fprintf(stderr, "fuck!\n");
 
     SDL_GPUGraphicsPipeline * pipeline = SDL_CreateGPUGraphicsPipeline(device, &pipelineCreateInfo);
 	if (pipeline == NULL)
@@ -155,6 +159,7 @@ int main(){
 		SDL_Log("Failed to create pipeline!");
 		return -1;
 	}
+	fprintf(stderr, "fuck2!\n");
 
 	SDL_ReleaseGPUShader(device, vert_shader);
 	SDL_ReleaseGPUShader(device, frag_shader);
@@ -226,6 +231,8 @@ int main(){
 	SDL_SubmitGPUCommandBuffer(uploadCmdBuf);
 	SDL_ReleaseGPUTransferBuffer(device, transferBuffer);
 
+	fprintf(stderr, "fuck!\n");
+
     bool quit = 0;
 
     while (!quit) {
@@ -265,6 +272,23 @@ int main(){
                 1,
                 NULL
             );
+
+			float camera_pos[4] = {0, 0, 0, 0};
+			SDL_PushGPUVertexUniformData(cmdbuf, 0, camera_pos, sizeof(float) * 4);
+			float model_mat_v1[4] = {0, 0, 0, 0};
+			SDL_PushGPUVertexUniformData(cmdbuf, 1, model_mat_v1, sizeof(float) * 4);
+			float model_mat_v2[4] = {0, 0, 0, 0};
+			SDL_PushGPUVertexUniformData(cmdbuf, 2, model_mat_v2, sizeof(float) * 4);
+			float model_mat_v3[4] = {0, 0, 0, 0};
+			SDL_PushGPUVertexUniformData(cmdbuf, 3, model_mat_v3, sizeof(float) * 4);
+			float model_mat_v4[4] = {0, 0, 0, 0};
+			SDL_PushGPUVertexUniformData(cmdbuf, 4, model_mat_v4, sizeof(float) * 4);
+			float mouse[2] = {0, 0};
+			SDL_PushGPUVertexUniformData(cmdbuf, 5, mouse, sizeof(float) * 2);
+			float blend = 0;
+			SDL_PushGPUVertexUniformData(cmdbuf, 6, &blend, sizeof(float) * 1);
+			float glow[3] = {NAN, NAN, NAN};
+			SDL_PushGPUVertexUniformData(cmdbuf, 7, glow, sizeof(float) * 3);
 
             SDL_BindGPUGraphicsPipeline(renderPass, pipeline);
             SDL_BindGPUVertexBuffers(renderPass, 0, &(SDL_GPUBufferBinding){ .buffer = vertex_buffer, .offset = 0 }, 1);

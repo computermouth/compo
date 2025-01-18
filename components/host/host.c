@@ -28,6 +28,13 @@ void host_outer_free(HostOuter * o) {
 	free(o);
 }
 
+// wasi-sdk compiler (as wasm32-wasi -- no main)
+// wit bindgen {h, c, o}
+// wasm-tools component new
+
+// -Wl,--no-entry
+// -nostdlib
+
 /*
 int main(){
 	HostInner inner = host_new_inner(4);
