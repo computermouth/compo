@@ -1,6 +1,9 @@
 // adapted from https://github.com/TheSpydog/SDL_gpu_examples
 
 #include <SDL3/SDL.h>
+#include <SDL3/SDL_error.h>
+#include <SDL3/SDL_gpu.h>
+#include <stdio.h>
 #include <stdint.h>
 
 typedef struct PositionColorVertex {
@@ -51,7 +54,7 @@ int main(){
         .format = vert_format,
         .stage = SDL_GPU_SHADERSTAGE_VERTEX,
         .num_samplers = 0,
-        .num_uniform_buffers = 0,
+        .num_uniform_buffers = 1,
         .num_storage_buffers = 0,
         .num_storage_textures = 0,
     };
@@ -75,7 +78,7 @@ int main(){
         .format = frag_format,
         .stage = SDL_GPU_SHADERSTAGE_VERTEX,
         .num_samplers = 0,
-        .num_uniform_buffers = 0,
+        .num_uniform_buffers = 1,
         .num_storage_buffers = 0,
         .num_storage_textures = 0,
     };
@@ -162,9 +165,9 @@ int main(){
 		false
 	);
 
-	transferData[0] = (PositionColorVertex) {-0.5,-0.5,0,0xFF,0x00,0x00,0xFF, 1.2, 1.2, 1.2, 1.2 };
-	transferData[1] = (PositionColorVertex) { 0.5,-0.5,0,0x00,0xFF,0x00,0xFF, 1.2, 1.2, 1.2, 1.2 };
-	transferData[2] = (PositionColorVertex) { 0  , 0.5,0,0x00,0x00,0xFF,0xFF, 1.2, 1.2, 1.2, 1.2 };
+	transferData[0] = (PositionColorVertex) {-0.5,-0.5,0,0x7F,0x7F,0x7F,0xFF, 1.2, 1.2, 1.2, 1.2 };
+	transferData[1] = (PositionColorVertex) { 0.5,-0.5,0,0x7F,0x7F,0x7F,0xFF, 1.2, 1.2, 1.2, 1.2 };
+	transferData[2] = (PositionColorVertex) { 0  , 0.5,0,0x7F,0x7F,0x7F,0xFF, 1.2, 1.2, 1.2, 1.2 };
 
 	// Upload the transfer data to the vertex buffer
 	SDL_GPUCommandBuffer* uploadCmdBuf = SDL_AcquireGPUCommandBuffer(device);
@@ -228,12 +231,21 @@ int main(){
                 NULL
             );
 
-			// float add_color[3] = {0, 0, 0};
-			// float add_color[3] = {.5, 0, 0};
-			// SDL_PushGPUVertexUniformData(cmdbuf, 0, add_color, sizeof(float) * 3);
-
             SDL_BindGPUGraphicsPipeline(renderPass, pipeline);
             SDL_BindGPUVertexBuffers(renderPass, 0, &(SDL_GPUBufferBinding){ .buffer = vertex_buffer, .offset = 0 }, 1);
+
+			typedef struct Colors {
+				float add[4];
+				float sub[4];
+			} Colors;
+
+			Colors colors = (Colors) {
+				.add = {0, 0, 0, 0},
+				.sub = {0, 0, 0, 0},
+			};
+
+			SDL_PushGPUVertexUniformData(cmdbuf, 0, &colors, sizeof(Colors));
+
             SDL_DrawGPUPrimitives(renderPass, 3, 1, 0, 0);
 
             SDL_EndGPURenderPass(renderPass);

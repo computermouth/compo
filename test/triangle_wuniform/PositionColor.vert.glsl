@@ -8,13 +8,14 @@ layout(location = 2) in vec4 fakeInParam;
 layout(location = 0) out vec4 fragColor;
 layout(location = 1) out vec4 fakeOutParam;
 
-layout(set = 0, binding = 0) uniform UBO {
-    vec3 addColor;
+layout(set = 1, binding = 0) uniform UBO {
+    vec4 addColor;
+    vec4 subColor;
 };
 
 void main()
 {
     fakeOutParam = fakeInParam;
-    fragColor = inColor + vec4(addColor, 1.0);
+    fragColor = inColor;
     gl_Position = vec4(inPosition, 1.0);
 }
