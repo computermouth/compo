@@ -9,7 +9,6 @@
 typedef struct PositionColorVertex {
 	float x, y, z;        // 12B
 	Uint8 r, g, b, a;     // 4B
-	float f1, f2, f3, f4; // 16B
 } PositionColorVertex;
 
 int main(){
@@ -119,11 +118,6 @@ int main(){
 				.format = SDL_GPU_VERTEXELEMENTFORMAT_UBYTE4_NORM,
 				.location = 1,
 				.offset = sizeof(float) * 3
-			}, {
-				.buffer_slot = 0,
-				.format = SDL_GPU_VERTEXELEMENTFORMAT_FLOAT4,
-				.location = 2,
-				.offset = sizeof(float) * 3 + sizeof(Uint8) * 4
 			}}
 		},
 		.primitive_type = SDL_GPU_PRIMITIVETYPE_TRIANGLELIST,
@@ -165,9 +159,9 @@ int main(){
 		false
 	);
 
-	transferData[0] = (PositionColorVertex) {-0.5,-0.5,0,0x7F,0x7F,0x7F,0xFF, 1.2, 1.2, 1.2, 1.2 };
-	transferData[1] = (PositionColorVertex) { 0.5,-0.5,0,0x7F,0x7F,0x7F,0xFF, 1.2, 1.2, 1.2, 1.2 };
-	transferData[2] = (PositionColorVertex) { 0  , 0.5,0,0x7F,0x7F,0x7F,0xFF, 1.2, 1.2, 1.2, 1.2 };
+	transferData[0] = (PositionColorVertex) {-0.5,-0.5,0,0x7F,0x7F,0x7F,0xFF };
+	transferData[1] = (PositionColorVertex) { 0.5,-0.5,0,0x7F,0x7F,0x7F,0xFF };
+	transferData[2] = (PositionColorVertex) { 0  , 0.5,0,0x7F,0x7F,0x7F,0xFF };
 
 	// Upload the transfer data to the vertex buffer
 	SDL_GPUCommandBuffer* uploadCmdBuf = SDL_AcquireGPUCommandBuffer(device);
@@ -234,17 +228,11 @@ int main(){
             SDL_BindGPUGraphicsPipeline(renderPass, pipeline);
             SDL_BindGPUVertexBuffers(renderPass, 0, &(SDL_GPUBufferBinding){ .buffer = vertex_buffer, .offset = 0 }, 1);
 
-			typedef struct Colors {
-				float add[4];
-				float sub[4];
-			} Colors;
+			float add[3] = {0, 0, 0};
+			SDL_PushGPUVertexUniformData(cmdbuf, 1, &add, sizeof(float) * 3);
 
-			Colors colors = (Colors) {
-				.add = {0, 0, 0, 0},
-				.sub = {0, 0, 0, 0},
-			};
-
-			SDL_PushGPUVertexUniformData(cmdbuf, 0, &colors, sizeof(Colors));
+			float sub[3] = {.4, 0, 0};
+			SDL_PushGPUFragmentUniformData(cmdbuf, 0, &sub, sizeof(float) * 3);
 
             SDL_DrawGPUPrimitives(renderPass, 3, 1, 0, 0);
 
