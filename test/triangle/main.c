@@ -40,7 +40,7 @@ int main(){
 
     SDL_GPUShaderFormat vert_format = SDL_GPU_SHADERFORMAT_SPIRV;
     size_t vert_shader_bc_sz;
-    void * vert_shader_bc = SDL_LoadFile("PositionColor.vert.spv", &vert_shader_bc_sz);
+    void * vert_shader_bc = SDL_LoadFile("PositionColor.vert.glsl.spv", &vert_shader_bc_sz);
 
     SDL_GPUShaderCreateInfo vert_shader_info = {
         .code = vert_shader_bc,
@@ -64,7 +64,7 @@ int main(){
 
     SDL_GPUShaderFormat frag_format = SDL_GPU_SHADERFORMAT_SPIRV;
     size_t frag_shader_bc_sz;
-    void * frag_shader_bc = SDL_LoadFile("SolidColor.frag.spv", &frag_shader_bc_sz);
+    void * frag_shader_bc = SDL_LoadFile("SolidColor.frag.glsl.spv", &frag_shader_bc_sz);
 
     SDL_GPUShaderCreateInfo frag_shader_info = {
         .code = frag_shader_bc,
