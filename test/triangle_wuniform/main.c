@@ -215,6 +215,7 @@ int main(){
 
 				fprintf(stderr, "add: %.1f %.1f %.1f\n", add[0], add[1], add[2]);
 				fprintf(stderr, "sub: %.1f %.1f %.1f\n", sub[0], sub[1], sub[2]);
+				fprintf(stderr, "\n");
 			}
         }
 
