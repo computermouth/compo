@@ -3,6 +3,8 @@
 #include <SDL3/SDL.h>
 #include <SDL3/SDL_error.h>
 #include <SDL3/SDL_gpu.h>
+#include <SDL3/SDL_oldnames.h>
+#include <math.h>
 #include <stdio.h>
 #include <stdint.h>
 
@@ -10,6 +12,9 @@ typedef struct PositionColorVertex {
 	float x, y, z;        // 12B
 	Uint8 r, g, b, a;     // 4B
 } PositionColorVertex;
+
+float add[3] = {.5, .5, .5};
+float sub[3] = {0, 0, 0};
 
 int main(){
 
@@ -194,6 +199,22 @@ int main(){
 		while (SDL_PollEvent(&evt)) {
 			if (evt.type == SDL_EVENT_QUIT) {
 				quit = true;
+			} else if (evt.type == SDL_EVENT_KEY_UP) {
+				if (evt.key.key == SDLK_Q)
+					add[0] = fmodf(add[0] + .1, 1.0);
+				if (evt.key.key == SDLK_W)
+					add[1] = fmodf(add[1] + .1, 1.0);
+				if (evt.key.key == SDLK_E)
+					add[2] = fmodf(add[2] + .1, 1.0);
+				if (evt.key.key == SDLK_A)
+					sub[0] = fmodf(sub[0] + .1, 1.0);
+				if (evt.key.key == SDLK_S)
+					sub[1] = fmodf(sub[1] + .1, 1.0);
+				if (evt.key.key == SDLK_D)
+					sub[2] = fmodf(sub[2] + .1, 1.0);
+
+				fprintf(stderr, "add: %.1f %.1f %.1f\n", add[0], add[1], add[2]);
+				fprintf(stderr, "sub: %.1f %.1f %.1f\n", sub[0], sub[1], sub[2]);
 			}
         }
 
@@ -228,10 +249,8 @@ int main(){
             SDL_BindGPUGraphicsPipeline(renderPass, pipeline);
             SDL_BindGPUVertexBuffers(renderPass, 0, &(SDL_GPUBufferBinding){ .buffer = vertex_buffer, .offset = 0 }, 1);
 
-			float add[3] = {.5, .5, .5};
 			SDL_PushGPUVertexUniformData(cmdbuf, 0, &add, sizeof(float) * 3);
 
-			float sub[3] = {0, 0, .5};
 			SDL_PushGPUFragmentUniformData(cmdbuf, 0, &sub, sizeof(float) * 3);
 
             SDL_DrawGPUPrimitives(renderPass, 3, 1, 0, 0);
