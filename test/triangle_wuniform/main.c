@@ -159,9 +159,9 @@ int main(){
 		false
 	);
 
-	transferData[0] = (PositionColorVertex) {-0.5,-0.5,0,0x7F,0x7F,0x7F,0xFF };
-	transferData[1] = (PositionColorVertex) { 0.5,-0.5,0,0x7F,0x7F,0x7F,0xFF };
-	transferData[2] = (PositionColorVertex) { 0  , 0.5,0,0x7F,0x7F,0x7F,0xFF };
+	transferData[0] = (PositionColorVertex) {-0.5,-0.5,0,0x00,0x00,0x00,0xFF };
+	transferData[1] = (PositionColorVertex) { 0.5,-0.5,0,0x00,0x00,0x00,0xFF };
+	transferData[2] = (PositionColorVertex) { 0  , 0.5,0,0x00,0x00,0x00,0xFF };
 
 	// Upload the transfer data to the vertex buffer
 	SDL_GPUCommandBuffer* uploadCmdBuf = SDL_AcquireGPUCommandBuffer(device);
@@ -228,10 +228,10 @@ int main(){
             SDL_BindGPUGraphicsPipeline(renderPass, pipeline);
             SDL_BindGPUVertexBuffers(renderPass, 0, &(SDL_GPUBufferBinding){ .buffer = vertex_buffer, .offset = 0 }, 1);
 
-			float add[3] = {0, 0, 0};
-			SDL_PushGPUVertexUniformData(cmdbuf, 1, &add, sizeof(float) * 3);
+			float add[3] = {.5, .5, .5};
+			SDL_PushGPUVertexUniformData(cmdbuf, 0, &add, sizeof(float) * 3);
 
-			float sub[3] = {.4, 0, 0};
+			float sub[3] = {0, 0, .5};
 			SDL_PushGPUFragmentUniformData(cmdbuf, 0, &sub, sizeof(float) * 3);
 
             SDL_DrawGPUPrimitives(renderPass, 3, 1, 0, 0);
