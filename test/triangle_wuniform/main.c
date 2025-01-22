@@ -26,7 +26,7 @@ int main(){
 
     SDL_GPUDevice * device = SDL_CreateGPUDevice(
         SDL_GPU_SHADERFORMAT_SPIRV | SDL_GPU_SHADERFORMAT_DXIL | SDL_GPU_SHADERFORMAT_MSL,
-        false,
+        true,
         NULL
     );
 
@@ -80,7 +80,7 @@ int main(){
         .code_size = frag_shader_bc_sz,
         .entrypoint = "main",
         .format = frag_format,
-        .stage = SDL_GPU_SHADERSTAGE_VERTEX,
+        .stage = SDL_GPU_SHADERSTAGE_FRAGMENT,
         .num_samplers = 0,
         .num_uniform_buffers = 1,
         .num_storage_buffers = 0,
@@ -112,7 +112,7 @@ int main(){
 				.instance_step_rate = 0,
 				.pitch = sizeof(PositionColorVertex)
 			}},
-			.num_vertex_attributes = 3,
+			.num_vertex_attributes = 2,
 			.vertex_attributes = (SDL_GPUVertexAttribute[]){{
 				.buffer_slot = 0,
 				.format = SDL_GPU_VERTEXELEMENTFORMAT_FLOAT3,
@@ -250,9 +250,9 @@ int main(){
             SDL_BindGPUGraphicsPipeline(renderPass, pipeline);
             SDL_BindGPUVertexBuffers(renderPass, 0, &(SDL_GPUBufferBinding){ .buffer = vertex_buffer, .offset = 0 }, 1);
 
-			SDL_PushGPUVertexUniformData(cmdbuf, 0, &add, sizeof(float) * 3);
+            SDL_PushGPUVertexUniformData(cmdbuf, 0, &add, sizeof(float) * 3);
 
-			SDL_PushGPUFragmentUniformData(cmdbuf, 0, &sub, sizeof(float) * 3);
+            SDL_PushGPUFragmentUniformData(cmdbuf, 0, &sub, sizeof(float) * 3);
 
             SDL_DrawGPUPrimitives(renderPass, 3, 1, 0, 0);
 
